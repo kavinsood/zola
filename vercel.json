@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/refresh-gemini-files",
-      "schedule": "*/42 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 } 
