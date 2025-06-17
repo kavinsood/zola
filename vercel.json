@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "api/cron/refresh-gemini-files",
+      "schedule": "0 */42 * * *"
+    }
+  ]
+} 
