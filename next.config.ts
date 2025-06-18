@@ -8,6 +8,7 @@ const nextConfig: NextConfig = withBundleAnalyzer({
   output: 'standalone',
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react"],
+    nodeMiddleware: true,
   },
   images: {
     remotePatterns: [
