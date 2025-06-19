@@ -81,34 +81,41 @@ async function getAccessToken(): Promise<string> {
   
   // If JSON credentials are provided as env var, use them
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-    try {
-      // Some deployment platforms wrap the JSON string in additional quotes or
-      // escape new-line characters. Attempt to normalise before parsing so that
-      // we don't crash with a SyntaxError when reading the credentials.
-      let raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON.trim()
+    let raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON.trim()
 
-      // Remove wrapping quotes if present (either single or double).
-      if ((raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))) {
-        raw = raw.slice(1, -1)
-      }
-
-      // Convert escaped newlines ("\n") back to real newlines so that multiline
-      // credentials are parsed correctly.
-      raw = raw.replace(/\\n/g, '\n')
-
-      const credentials = JSON.parse(raw)
-
-      const auth = new GoogleAuth({
-        credentials,
-        scopes: ['https://www.googleapis.com/auth/cloud-platform']
-      })
-      const client = await auth.getClient()
-      const tokenResponse = await client.getAccessToken()
-      return tokenResponse.token || ''
-    } catch (err) {
-      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:', err)
-      throw err
+    // Remove wrapping quotes if present (either single or double).
+    if ((raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))) {
+      raw = raw.slice(1, -1)
     }
+
+    let credentials: Record<string, any> | null = null
+
+    try {
+      credentials = JSON.parse(raw)
+    } catch (parseErr) {
+      // If we fail, it's likely because raw new-line characters are embedded
+      // within the JSON string values (most commonly in private_key).
+      // Escape ONLY the newlines that appear *inside* double-quoted strings.
+
+      // Use a character class instead of the "s" (dotAll) flag to stay
+      // compatible with projects targeting < ES2018.
+      const escapedNewlines = raw.replace(/"([\s\S]*?)"/g, (_match, group) => {
+        // If the captured group already contains an escaped \n, leave it.
+        // Otherwise escape raw newlines.
+        const fixed = group.replace(/\n/g, '\\n').replace(/\r/g, '\\r')
+        return `"${fixed}"`
+      })
+
+      credentials = JSON.parse(escapedNewlines)
+    }
+
+    const auth = new GoogleAuth({
+      credentials: credentials!,
+      scopes: ['https://www.googleapis.com/auth/cloud-platform']
+    })
+    const client = await auth.getClient()
+    const tokenResponse = await client.getAccessToken()
+    return tokenResponse.token || ''
   }
   
   // Otherwise use default application credentials
