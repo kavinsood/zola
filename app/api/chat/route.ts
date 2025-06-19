@@ -107,17 +107,19 @@ export async function POST(req: Request) {
     // Attach knowledge-base txt URIs only once per chat (first request)
     let messagesWithKnowledge = cleanedMessages
     const alreadyHasFiles = cleanedMessages.some((m) =>
-      m.parts?.some((p) => "file_data" in p)
+      m.parts?.some((p: any) => "file_data" in p || "fileData" in p)
     )
 
     if (!alreadyHasFiles) {
       const fileParts = await getGeminiTextParts()
-      const kbMessage = {
-        role: "user",
-        parts: fileParts as any,
-        content: "",
-      } as unknown as MessageAISDK
-      messagesWithKnowledge = [kbMessage, ...cleanedMessages]
+      if (fileParts.length > 0) {
+        const kbMessage = {
+          role: "user",
+          parts: fileParts as any,
+          content: "",
+        } as unknown as MessageAISDK
+        messagesWithKnowledge = [kbMessage, ...cleanedMessages]
+      }
     }
 
     let apiKey: string | undefined

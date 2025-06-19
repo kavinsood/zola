@@ -3,10 +3,12 @@ import { ensureGeminiTextUris } from "@/lib/gemini-files"
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify this is called from Vercel Cron (optional security check)
-    const authHeader = request.headers.get("authorization")
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    // Optional security check: enforce Authorization only if CRON_SECRET is defined
+    if (process.env.CRON_SECRET) {
+      const authHeader = request.headers.get("authorization")
+      if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      }
     }
 
     // Refresh Gemini file URIs
