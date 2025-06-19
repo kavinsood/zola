@@ -10,6 +10,7 @@ const safeRequire = (name: string) => {
 }
 
 const getGeminiSdk = (modelId: string, apiKey?: string) => {
+  // Try Vertex SDK first if project env var is provided
   if (process.env.GOOGLE_VERTEX_PROJECT) {
     const vertexMod = safeRequire("@ai-sdk/google-vertex") as any
     const vertexFn = vertexMod?.vertex
@@ -20,13 +21,17 @@ const getGeminiSdk = (modelId: string, apiKey?: string) => {
       })
     }
   }
-  // Fallback to Google AI SDK
+
+  // Fallback to Google Generative AI SDK (node / edge compatible ESM import handled by bundler)
   const googleMod = safeRequire("@ai-sdk/google") as any
   const googleFn = googleMod?.google
   if (typeof googleFn === "function") {
     return googleFn(modelId, { apiKey })
   }
-  throw new Error("No compatible Gemini SDK found. Ensure \"@ai-sdk/google\" or \"@ai-sdk/google-vertex\" is installed.")
+
+  // Final fallback: use the generic openproviders helper which already imports the correct SDK.
+  // This avoids `require` entirely and works in ESM-only production builds.
+  return openproviders(modelId as any, undefined as any, apiKey)
 }
 
 const geminiModels: ModelConfig[] = [
