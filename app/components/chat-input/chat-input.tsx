@@ -30,7 +30,7 @@ type ChatInputProps = {
   onFileRemove: (file: File) => void
   onSuggestion: (suggestion: string) => void
   hasSuggestions?: boolean
-  _onSelectModel: (model: string) => void
+  _onSelectModel?: (model: string) => void
   selectedModel: string
   isUserAuthenticated: boolean
   stop: () => void
