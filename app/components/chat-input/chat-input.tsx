@@ -1,7 +1,6 @@
 "use client"
 
 import { useAgentCommand } from "@/app/components/chat-input/use-agent-command"
-import { ModelSelector } from "@/components/common/model-selector/base"
 import {
   PromptInput,
   PromptInputAction,
@@ -31,7 +30,7 @@ type ChatInputProps = {
   onFileRemove: (file: File) => void
   onSuggestion: (suggestion: string) => void
   hasSuggestions?: boolean
-  onSelectModel: (model: string) => void
+  _onSelectModel: (model: string) => void
   selectedModel: string
   isUserAuthenticated: boolean
   stop: () => void
@@ -50,7 +49,7 @@ export function ChatInput({
   onFileRemove,
   onSuggestion,
   hasSuggestions,
-  onSelectModel,
+  _onSelectModel,
   selectedModel,
   isUserAuthenticated,
   stop,
@@ -213,19 +212,7 @@ export function ChatInput({
                 isUserAuthenticated={isUserAuthenticated}
                 model={selectedModel}
               />
-              <ModelSelector
-                selectedModelId={selectedModel}
-                setSelectedModelId={onSelectModel}
-                isUserAuthenticated={isUserAuthenticated}
-                className="rounded-full"
-              />
-              {hasSearchSupport ? (
-                <ButtonSearch
-                  isSelected={enableSearch}
-                  onToggle={setEnableSearch}
-                  isAuthenticated={isUserAuthenticated}
-                />
-              ) : null}
+              {/* Model selector removed – default model is enforced globally */}
               {currentAgent && !hasToolSupport && (
                 <div className="flex items-center gap-1">
                   <Warning className="size-4" />
@@ -234,6 +221,13 @@ export function ChatInput({
                     as expected.
                   </p>
                 </div>
+              )}
+              {hasSearchSupport && (
+                <ButtonSearch
+                  isSelected={enableSearch}
+                  onToggle={setEnableSearch}
+                  isAuthenticated={isUserAuthenticated}
+                />
               )}
             </div>
             <PromptInputAction

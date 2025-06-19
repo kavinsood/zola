@@ -33,6 +33,10 @@ export async function ensureContextCache(fileUris: string[]): Promise<string> {
   const displayName = "knowledge-base-cache"
   const ttl = "86400s" // 24 hours
 
+  // Allow overriding the model to use for caching via env – some preview models
+  // do not currently support CachedContent and will return 500 INTERNAL errors.
+  const geminiModelId = process.env.GOOGLE_VERTEX_GEMINI_MODEL || "gemini-1.5-pro-latest"
+
   const response = await fetch(
     `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/cachedContents`,
     {
@@ -42,7 +46,7 @@ export async function ensureContextCache(fileUris: string[]): Promise<string> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: `projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.5-pro-preview-03-25`,
+        model: `projects/${projectId}/locations/${location}/publishers/google/models/${geminiModelId}`,
         displayName,
         contents: [{
           role: "user",
