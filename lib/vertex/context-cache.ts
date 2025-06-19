@@ -81,14 +81,34 @@ async function getAccessToken(): Promise<string> {
   
   // If JSON credentials are provided as env var, use them
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-    const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
-    const auth = new GoogleAuth({
-      credentials,
-      scopes: ['https://www.googleapis.com/auth/cloud-platform']
-    })
-    const client = await auth.getClient()
-    const tokenResponse = await client.getAccessToken()
-    return tokenResponse.token || ''
+    try {
+      // Some deployment platforms wrap the JSON string in additional quotes or
+      // escape new-line characters. Attempt to normalise before parsing so that
+      // we don't crash with a SyntaxError when reading the credentials.
+      let raw = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON.trim()
+
+      // Remove wrapping quotes if present (either single or double).
+      if ((raw.startsWith("'") && raw.endsWith("'")) || (raw.startsWith('"') && raw.endsWith('"'))) {
+        raw = raw.slice(1, -1)
+      }
+
+      // Convert escaped newlines ("\n") back to real newlines so that multiline
+      // credentials are parsed correctly.
+      raw = raw.replace(/\\n/g, '\n')
+
+      const credentials = JSON.parse(raw)
+
+      const auth = new GoogleAuth({
+        credentials,
+        scopes: ['https://www.googleapis.com/auth/cloud-platform']
+      })
+      const client = await auth.getClient()
+      const tokenResponse = await client.getAccessToken()
+      return tokenResponse.token || ''
+    } catch (err) {
+      console.error('Failed to parse GOOGLE_APPLICATION_CREDENTIALS_JSON:', err)
+      throw err
+    }
   }
   
   // Otherwise use default application credentials
