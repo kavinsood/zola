@@ -246,6 +246,32 @@ const geminiModels: ModelConfig[] = [
     apiSdk: (apiKey?: string) =>
       openproviders("gemma-3-27b-it", undefined, apiKey),
   },
+  {
+    id: "gemini-2.5-pro",
+    name: "Gemini 2.5 Pro",
+    provider: "Google",
+    providerId: "google",
+    modelFamily: "Gemini",
+    description: "GA release of Gemini 2.5 Pro – multimodal flagship model (context-cache supported).",
+    tags: ["pro", "flagship", "multimodal", "ga"],
+    contextWindow: 2000000,
+    inputCost: 2.5,
+    outputCost: 10.0,
+    priceUnit: "per 1M tokens",
+    vision: true,
+    tools: true,
+    audio: true,
+    reasoning: true,
+    openSource: false,
+    speed: "Medium",
+    intelligence: "High",
+    website: "https://gemini.google.com",
+    apiDocs: "https://ai.google.dev/api/docs",
+    modelPage: "https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-pro",
+    releasedAt: "2025-06-17",
+    icon: "gemini",
+    apiSdk: (apiKey?: string) => getGeminiSdk("gemini-2.5-pro", apiKey),
+  },
 ]
 
 export { geminiModels }

@@ -87,6 +87,8 @@ const MODEL_PROVIDER_MAP: Record<string, Provider> = {
   "gemini-exp-1206": "google",
   "gemma-3-27b-it": "google",
   "learnlm-1.5-pro-experimental": "google",
+  "gemini-2.5-pro": "google",
+  "gemini-2.5-pro-latest": "google",
 
   // Anthropic
   "claude-3-7-sonnet-20250219": "anthropic",
