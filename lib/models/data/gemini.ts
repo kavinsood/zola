@@ -162,14 +162,13 @@ const geminiModels: ModelConfig[] = [
       openproviders("gemini-2.5-pro-exp-03-25", undefined, apiKey),
   },
   {
-    id: "gemini-2.5-pro-exp-03-25-pro",
+    id: "gemini-2.5-pro-preview-03-25",
     name: "Gemini 2.5 Pro Preview",
     provider: "Google",
     providerId: "google",
     modelFamily: "Gemini",
-    description:
-      "Preview of Gemini Pro with improved performance and reasoning.",
-    tags: ["preview", "reasoning", "advanced", "experimental"],
+    description: "Preview of Gemini 2.5 Pro with higher quota limits.",
+    tags: ["preview", "pro", "reasoning", "experimental"],
     contextWindow: 2000000,
     inputCost: 2.5,
     outputCost: 10.0,
@@ -184,9 +183,10 @@ const geminiModels: ModelConfig[] = [
     website: "https://gemini.google.com",
     apiDocs: "https://ai.google.dev/api/docs",
     modelPage: "https://deepmind.google/technologies/gemini",
+    releasedAt: "2025-03-25",
     icon: "gemini",
     apiSdk: (apiKey?: string) =>
-      openproviders("gemini-2.5-pro-exp-03-25", undefined, apiKey),
+      openproviders("gemini-2.5-pro-preview-03-25", undefined, apiKey),
   },
   {
     id: "gemma-3-27b-it",

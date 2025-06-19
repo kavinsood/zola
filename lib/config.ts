@@ -23,11 +23,11 @@ export const FREE_MODELS_IDS = [
   "gemini-2.0-flash-001",
   "gemini-2.0-flash-lite-preview-02-05",
   "gemini-2.5-pro-exp-03-25",
-  "gemini-2.5-pro-exp-03-25-pro",
+  "gemini-2.5-pro-preview-03-25",
   "gemma-3-27b-it",
 ]
 
-export const MODEL_DEFAULT = "gemini-1.5-flash-002"
+export const MODEL_DEFAULT = "gemini-2.5-pro-preview-03-25"
 
 export const APP_NAME = "Zola"
 export const APP_DOMAIN = "https://zola.chat"
