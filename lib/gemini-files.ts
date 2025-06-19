@@ -2,6 +2,7 @@
 import fs from "fs/promises"
 import path from "path"
 import { createClient } from "@/lib/supabase/server"
+import { ensureContextCache, getContextCacheName } from "@/lib/vertex/context-cache"
 
 interface FileMeta {
   uri: string
@@ -85,6 +86,16 @@ async function uploadAndStore(supabase: any): Promise<FileRow[]> {
 
 export async function getGeminiTextParts() {
   try {
+    if (process.env.GOOGLE_VERTEX_PROJECT) {
+      // Vertex AI context caching path
+      const metas = await ensureGeminiTextUris()
+      const cacheName = await ensureContextCache(metas.map((m) => m.uri))
+      if (cacheName) {
+        return [{ cachedContent: cacheName } as any]
+      }
+    }
+    
+    // Fallback to regular file parts
     const metas = await ensureGeminiTextUris()
     return metas.map((m) => ({
       fileData: { 

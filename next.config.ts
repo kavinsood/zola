@@ -24,6 +24,20 @@ const nextConfig: NextConfig = withBundleAnalyzer({
     // @todo: remove before going live
     ignoreDuringBuilds: true,
   },
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    if (!isServer) {
+      // Stub out Node.js core modules that are only used server-side
+      config.resolve.fallback = {
+        ...(config.resolve.fallback || {}),
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
+        dns: false,
+      }
+    }
+    return config
+  },
 })
 
 export default nextConfig

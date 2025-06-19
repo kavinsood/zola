@@ -1,6 +1,14 @@
 import { openproviders } from "@/lib/openproviders"
 import { ModelConfig } from "../types"
 
+const safeRequire = (name: string) => {
+  try {
+    return eval('require')(name)
+  } catch {
+    return null
+  }
+}
+
 const geminiModels: ModelConfig[] = [
   {
     id: "gemini-1.5-flash-002",
@@ -25,8 +33,19 @@ const geminiModels: ModelConfig[] = [
     apiDocs: "https://ai.google.dev/api/docs",
     modelPage: "https://deepmind.google/technologies/gemini",
     icon: "gemini",
-    apiSdk: (apiKey?: string) =>
-      openproviders("gemini-1.5-flash-002", undefined, apiKey),
+    apiSdk: (apiKey?: string) => {
+      // Use Vertex AI if configured, otherwise use Google AI
+      if (process.env.GOOGLE_VERTEX_PROJECT) {
+        const { vertex } = safeRequire("@ai-sdk/google-vertex")
+        return vertex("gemini-1.5-flash-002", {
+          project: process.env.GOOGLE_VERTEX_PROJECT,
+          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
+        })
+      } else {
+        const { google } = safeRequire("@ai-sdk/google")
+        return google("gemini-1.5-flash-002", { apiKey })
+      }
+    },
   },
   {
     id: "gemini-1.5-flash-8b",
@@ -51,8 +70,19 @@ const geminiModels: ModelConfig[] = [
     apiDocs: "https://ai.google.dev/api/docs",
     modelPage: "https://deepmind.google/technologies/gemini",
     icon: "gemini",
-    apiSdk: (apiKey?: string) =>
-      openproviders("gemini-1.5-flash-8b", undefined, apiKey),
+    apiSdk: (apiKey?: string) => {
+      // Use Vertex AI if configured, otherwise use Google AI
+      if (process.env.GOOGLE_VERTEX_PROJECT) {
+        const { vertex } = safeRequire("@ai-sdk/google-vertex")
+        return vertex("gemini-1.5-flash-8b", {
+          project: process.env.GOOGLE_VERTEX_PROJECT,
+          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
+        })
+      } else {
+        const { google } = safeRequire("@ai-sdk/google")
+        return google("gemini-1.5-flash-8b", { apiKey })
+      }
+    },
   },
   {
     id: "gemini-1.5-pro-002",
@@ -185,8 +215,19 @@ const geminiModels: ModelConfig[] = [
     modelPage: "https://deepmind.google/technologies/gemini",
     releasedAt: "2025-03-25",
     icon: "gemini",
-    apiSdk: (apiKey?: string) =>
-      openproviders("gemini-2.5-pro-preview-03-25", undefined, apiKey),
+    apiSdk: (apiKey?: string) => {
+      // Use Vertex AI if configured, otherwise use Google AI
+      if (process.env.GOOGLE_VERTEX_PROJECT) {
+        const { vertex } = safeRequire("@ai-sdk/google-vertex")
+        return vertex("gemini-2.5-pro-preview-03-25", {
+          project: process.env.GOOGLE_VERTEX_PROJECT,
+          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
+        })
+      } else {
+        const { google } = safeRequire("@ai-sdk/google")
+        return google("gemini-2.5-pro-preview-03-25", { apiKey })
+      }
+    },
   },
   {
     id: "gemma-3-27b-it",

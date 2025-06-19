@@ -113,12 +113,12 @@ export async function POST(req: Request) {
     if (!alreadyHasFiles) {
       const fileParts = await getGeminiTextParts()
       if (fileParts.length > 0) {
-        const kbMessage = {
-          role: "user",
-          parts: fileParts as any,
-          content: "",
-        } as unknown as MessageAISDK
-        messagesWithKnowledge = [kbMessage, ...cleanedMessages]
+      const kbMessage = {
+        role: "user",
+        parts: fileParts as any,
+        content: "",
+      } as unknown as MessageAISDK
+      messagesWithKnowledge = [kbMessage, ...cleanedMessages]
       }
     }
 

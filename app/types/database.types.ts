@@ -373,6 +373,24 @@ export type Database = {
         }
         Relationships: []
       }
+      gemini_context_cache: {
+        Row: {
+          id: number
+          name: string
+          expires_at: number
+        }
+        Insert: {
+          id: number
+          name: string
+          expires_at: number
+        }
+        Update: {
+          id?: number
+          name?: string
+          expires_at?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

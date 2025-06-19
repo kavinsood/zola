@@ -47,6 +47,10 @@ next-env.d.ts
 # env
 .env
 
+# Google service account keys
+*-client-*.json
+service-account*.json
+
 # bun
 bun.lockb
 bun.lock
