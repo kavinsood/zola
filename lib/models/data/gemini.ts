@@ -9,6 +9,26 @@ const safeRequire = (name: string) => {
   }
 }
 
+const getGeminiSdk = (modelId: string, apiKey?: string) => {
+  if (process.env.GOOGLE_VERTEX_PROJECT) {
+    const vertexMod = safeRequire("@ai-sdk/google-vertex") as any
+    const vertexFn = vertexMod?.vertex
+    if (typeof vertexFn === "function") {
+      return vertexFn(modelId, {
+        project: process.env.GOOGLE_VERTEX_PROJECT,
+        location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
+      })
+    }
+  }
+  // Fallback to Google AI SDK
+  const googleMod = safeRequire("@ai-sdk/google") as any
+  const googleFn = googleMod?.google
+  if (typeof googleFn === "function") {
+    return googleFn(modelId, { apiKey })
+  }
+  throw new Error("No compatible Gemini SDK found. Ensure \"@ai-sdk/google\" or \"@ai-sdk/google-vertex\" is installed.")
+}
+
 const geminiModels: ModelConfig[] = [
   {
     id: "gemini-1.5-flash-002",
@@ -33,19 +53,7 @@ const geminiModels: ModelConfig[] = [
     apiDocs: "https://ai.google.dev/api/docs",
     modelPage: "https://deepmind.google/technologies/gemini",
     icon: "gemini",
-    apiSdk: (apiKey?: string) => {
-      // Use Vertex AI if configured, otherwise use Google AI
-      if (process.env.GOOGLE_VERTEX_PROJECT) {
-        const { vertex } = safeRequire("@ai-sdk/google-vertex")
-        return vertex("gemini-1.5-flash-002", {
-          project: process.env.GOOGLE_VERTEX_PROJECT,
-          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
-        })
-      } else {
-        const { google } = safeRequire("@ai-sdk/google")
-        return google("gemini-1.5-flash-002", { apiKey })
-      }
-    },
+    apiSdk: (apiKey?: string) => getGeminiSdk("gemini-1.5-flash-002", apiKey),
   },
   {
     id: "gemini-1.5-flash-8b",
@@ -70,19 +78,7 @@ const geminiModels: ModelConfig[] = [
     apiDocs: "https://ai.google.dev/api/docs",
     modelPage: "https://deepmind.google/technologies/gemini",
     icon: "gemini",
-    apiSdk: (apiKey?: string) => {
-      // Use Vertex AI if configured, otherwise use Google AI
-      if (process.env.GOOGLE_VERTEX_PROJECT) {
-        const { vertex } = safeRequire("@ai-sdk/google-vertex")
-        return vertex("gemini-1.5-flash-8b", {
-          project: process.env.GOOGLE_VERTEX_PROJECT,
-          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
-        })
-      } else {
-        const { google } = safeRequire("@ai-sdk/google")
-        return google("gemini-1.5-flash-8b", { apiKey })
-      }
-    },
+    apiSdk: (apiKey?: string) => getGeminiSdk("gemini-1.5-flash-8b", apiKey),
   },
   {
     id: "gemini-1.5-pro-002",
@@ -215,19 +211,7 @@ const geminiModels: ModelConfig[] = [
     modelPage: "https://deepmind.google/technologies/gemini",
     releasedAt: "2025-03-25",
     icon: "gemini",
-    apiSdk: (apiKey?: string) => {
-      // Use Vertex AI if configured, otherwise use Google AI
-      if (process.env.GOOGLE_VERTEX_PROJECT) {
-        const { vertex } = safeRequire("@ai-sdk/google-vertex")
-        return vertex("gemini-2.5-pro-preview-03-25", {
-          project: process.env.GOOGLE_VERTEX_PROJECT,
-          location: process.env.GOOGLE_VERTEX_LOCATION || "us-central1",
-        })
-      } else {
-        const { google } = safeRequire("@ai-sdk/google")
-        return google("gemini-2.5-pro-preview-03-25", { apiKey })
-      }
-    },
+    apiSdk: (apiKey?: string) => getGeminiSdk("gemini-2.5-pro-preview-03-25", apiKey),
   },
   {
     id: "gemma-3-27b-it",
